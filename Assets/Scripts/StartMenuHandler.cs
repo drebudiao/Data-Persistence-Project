@@ -14,6 +14,9 @@ public class StartMenuHandler : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // Load Saved Game Data
+        GameData.Instance.LoadGameData();
+
         // Add On Submit listner to Player Name Input
         playerNameInput.onSubmit.AddListener(playerNameInputSubmit);
     }
@@ -45,7 +48,11 @@ public class StartMenuHandler : MonoBehaviour
     }
     private void DisplayBestScore()
     {
-        messageText.text = "Best Score: 000";
+        if (playerNameInput.text == GameData.Instance.playerName)
+            messageText.text = "Best Score: " + GameData.Instance.bestScore.ToString("000");
+        else
+            messageText.text = "New Player";
+
         messageText.color = Color.black;
         messageText.gameObject.SetActive(true);
     }
