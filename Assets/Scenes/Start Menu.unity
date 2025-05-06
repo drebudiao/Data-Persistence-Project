@@ -536,7 +536,7 @@ GameObject:
   - component: {fileID: 306866201}
   - component: {fileID: 306866200}
   m_Layer: 5
-  m_Name: Error Message
+  m_Name: Message Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1087,7 +1087,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerNameInput: {fileID: 312376975}
-  errorMessage: {fileID: 306866200}
+  messageText: {fileID: 306866200}
+  startButton: {fileID: 218937360}
 --- !u!1 &783145302
 GameObject:
   m_ObjectHideFlags: 0
