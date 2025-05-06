@@ -6,7 +6,10 @@ public class GameData : MonoBehaviour
     // Make a Singleton Instance
     public static GameData Instance;
     public string playerName;
-    public int bestScore;
+    public int playerBestScore;
+    public string bestPlayerName;
+    public int bestPlayerBestScore;
+
 
     private string saveFilename = "breakout.dat";
 
@@ -27,7 +30,9 @@ public class GameData : MonoBehaviour
     class SaveData
     {
         public string playerName;
-        public int bestScore;
+        public int playerBestScore;
+        public string bestPlayerName;
+        public int bestPlayerBestScore;
     }
 
     public void SaveGameData()
@@ -35,7 +40,9 @@ public class GameData : MonoBehaviour
         SaveData data = new SaveData();
 
         data.playerName = playerName;
-        data.bestScore = bestScore;
+        data.playerBestScore = playerBestScore;
+        data.bestPlayerName = bestPlayerName;
+        data.bestPlayerBestScore = bestPlayerBestScore;
 
         string json = JsonUtility.ToJson(data);
 
@@ -51,7 +58,9 @@ public class GameData : MonoBehaviour
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
             playerName = data.playerName;
-            bestScore = data.bestScore;
+            playerBestScore = data.playerBestScore;
+            bestPlayerName = data.bestPlayerName;
+            bestPlayerBestScore = data.bestPlayerBestScore;
         }
     }
 

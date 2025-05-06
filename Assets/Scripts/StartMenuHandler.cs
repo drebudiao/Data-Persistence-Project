@@ -35,6 +35,14 @@ public class StartMenuHandler : MonoBehaviour
         }
         else
         {
+            if (playerNameInput.text != GameData.Instance.playerName)
+            {
+                // Save the PlayerName
+                GameData.Instance.playerName = playerNameInput.text;
+                GameData.Instance.playerBestScore = 0;
+                GameData.Instance.SaveGameData();
+            }
+
             // Load the Scene
             SceneManager.LoadScene(1);
         }
@@ -49,7 +57,7 @@ public class StartMenuHandler : MonoBehaviour
     private void DisplayBestScore()
     {
         if (playerNameInput.text == GameData.Instance.playerName)
-            messageText.text = "Best Score: " + GameData.Instance.bestScore.ToString("000");
+            messageText.text = "Best Score: " + GameData.Instance.playerBestScore.ToString("000");
         else
             messageText.text = "New Player";
 

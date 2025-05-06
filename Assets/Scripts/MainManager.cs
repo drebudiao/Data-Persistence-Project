@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -18,10 +20,20 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
+    public Text playerNameText;
+    public Text bestScoreText;
+    private string playerName;
+    private string bestPlayerName;
+    private int bestPlayerBestScore;
+
     
     // Start is called before the first frame update
     void Start()
     {
+        // Load Game Data from Save file
+        LoadGameData();
+
+        // Initialze Game variables
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -72,5 +84,50 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        CheckBestScore();
     }
+
+    private void LoadGameData()
+    {
+        // GameData.Instance.LoadGameData();
+        playerName = GameData.Instance.playerName;
+        playerNameText.text = "Player: " + playerName;
+
+        UpdateBestPlayer(GameData.Instance.bestPlayerName, GameData.Instance.bestPlayerBestScore);
+    }
+
+    private void UpdateBestPlayer(string name, int score)
+    {
+        bestPlayerName = name;
+        bestPlayerBestScore = score;
+        bestScoreText.text = "Best Score: " + bestPlayerName + " - " + bestPlayerBestScore.ToString("000");
+    }
+
+    private void SaveGameData()
+    {
+        CheckBestScore();
+    }
+
+    private void CheckBestScore() 
+    {
+        bool isChanged = false;
+
+        if (m_Points > GameData.Instance.playerBestScore)
+        {
+            GameData.Instance.playerBestScore = m_Points;
+            isChanged = true;
+        }
+
+        if (m_Points > GameData.Instance.bestPlayerBestScore)
+        {
+            GameData.Instance.bestPlayerName = playerName;
+            GameData.Instance.bestPlayerBestScore = m_Points;
+            isChanged = true;
+        }
+
+        if (isChanged)
+            GameData.Instance.SaveGameData(); 
+    }
+
 }
