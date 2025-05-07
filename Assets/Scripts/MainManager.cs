@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
@@ -17,14 +18,12 @@ public class MainManager : MonoBehaviour
     
     private bool m_Started = false;
     private int m_Points;
-    
+
+    public GameObject gameOverBox;
     private bool m_GameOver = false;
 
     public Text playerNameText;
     public Text bestScoreText;
-    private string playerName;
-    private string bestPlayerName;
-    private int bestPlayerBestScore;
 
     
     // Start is called before the first frame update
@@ -78,56 +77,54 @@ public class MainManager : MonoBehaviour
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        CheckBestScore();
     }
 
     public void GameOver()
     {
-        m_GameOver = true;
-        GameOverText.SetActive(true);
-
         CheckBestScore();
+        SaveGameData();
+
+        m_GameOver = true;
+        gameOverBox.SetActive(true);
+    }
+
+    public void RetryLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ReturnToStartMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 
     private void LoadGameData()
     {
         // GameData.Instance.LoadGameData();
-        playerName = GameData.Instance.playerName;
+        string playerName = GameData.Instance.GetCurrentPlayerName();
         playerNameText.text = "Player: " + playerName;
 
-        UpdateBestPlayer(GameData.Instance.bestPlayerName, GameData.Instance.bestPlayerBestScore);
+        UpdateBestPlayer();
     }
 
-    private void UpdateBestPlayer(string name, int score)
+    private void UpdateBestPlayer()
     {
-        bestPlayerName = name;
-        bestPlayerBestScore = score;
-        bestScoreText.text = "Best Score: " + bestPlayerName + " - " + bestPlayerBestScore.ToString("000");
+        string name = GameData.Instance.GetBestPlayerName();
+        int score = GameData.Instance.GetBestPlayerBestScore();
+        bestScoreText.text = "Best Score: " + name + " - " + score.ToString("000");
+        GameData.Instance.UpdatePlayerBestScore(GameData.Instance.bestPlayerIndx, score);
     }
 
     private void SaveGameData()
     {
-        CheckBestScore();
+        GameData.Instance.SaveGameData();
     }
-
-    private void CheckBestScore() 
+    private void CheckBestScore()
     {
-        bool isChanged = false;
-
-        if (m_Points > GameData.Instance.playerBestScore)
-        {
-            GameData.Instance.playerBestScore = m_Points;
-            isChanged = true;
-        }
-
-        if (m_Points > GameData.Instance.bestPlayerBestScore)
-        {
-            GameData.Instance.bestPlayerName = playerName;
-            GameData.Instance.bestPlayerBestScore = m_Points;
-            isChanged = true;
-        }
-
-        if (isChanged)
-            GameData.Instance.SaveGameData(); 
+        Debug.Log("Check Best Score: " + m_Points);
+        GameData.Instance.UpdatePlayerBestScore(GameData.Instance.curPlayerIndx, m_Points);
+        UpdateBestPlayer();
     }
 
 }

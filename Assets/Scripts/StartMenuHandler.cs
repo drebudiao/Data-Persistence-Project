@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
 
 public class StartMenuHandler : MonoBehaviour
 {
@@ -35,13 +34,23 @@ public class StartMenuHandler : MonoBehaviour
         }
         else
         {
-            if (playerNameInput.text != GameData.Instance.playerName)
+            if (GameData.Instance.IsPlayerExisting(playerNameInput.text))
             {
-                // Save the PlayerName
-                GameData.Instance.playerName = playerNameInput.text;
-                GameData.Instance.playerBestScore = 0;
-                GameData.Instance.SaveGameData();
+                // Set the Current Player
+                int index = GameData.Instance.GetPlayerIndex(playerNameInput.text);
+                if (index != -1)
+                {
+                    GameData.Instance.setCurrentPlayer(index);
+                }
             }
+            else
+            {
+                // Add a new player
+                GameData.Instance.AddPlayer(playerNameInput.text, 0);
+            }
+
+            // Save the Game Data
+            GameData.Instance.SaveGameData();
 
             // Load the Scene
             SceneManager.LoadScene(1);
@@ -56,8 +65,21 @@ public class StartMenuHandler : MonoBehaviour
     }
     private void DisplayBestScore()
     {
-        if (playerNameInput.text == GameData.Instance.playerName)
-            messageText.text = "Best Score: " + GameData.Instance.playerBestScore.ToString("000");
+        string playerName = playerNameInput.text;
+
+        if (GameData.Instance.IsPlayerExisting(playerName))
+        {
+            int index = GameData.Instance.GetPlayerIndex(playerName);
+            if (index != -1)
+            {
+                GameData.Instance.setCurrentPlayer(index);
+                messageText.text = "Best Score: " + GameData.Instance.GetPlayerBestScore(index).ToString("000");
+            }
+            else
+            {
+                messageText.text = "New Player";
+            }
+        }
         else
             messageText.text = "New Player";
 
